@@ -30,8 +30,8 @@ QTRSensors qtr;
 long previousTime = 0;
 long startCalibrationTime = 0;
 int calibrateSpeed = 190;
-int calibrateTime = 300;
 int calibrationTotalTime = 3000;
+int calibrationWaitTime = 200;
  
 const int sensorCount = 6;
 int sensorValues[sensorCount];
@@ -66,12 +66,12 @@ void calibrate() {
   qtr.readLineBlack(sensorValues);
  
   white = true;
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < sensorCount; i++) {
     if (sensorValues[i] > sensorThreshold)
       white = false;
   }
  
-  if (millis() - previousTime >= 200) {
+  if (millis() - previousTime >= calibrationWaitTime) {
     if (white) {
       previousTime = millis();
       leftDirection = !leftDirection;
@@ -99,7 +99,7 @@ void pidControl() {
   i = i + error;
   d = error - lastError;
  
-  motorSpeed = kp * p + ki * i + kd * d;  
+  motorSpeed = kp * p + ki * i + kd * d;
  
   m1Speed = baseSpeed;
   m2Speed = baseSpeed;
